@@ -5,8 +5,8 @@ import { IAppError } from "../types/globalTypes";
 
 export const fetchAllUsersApi = async (): Promise<IUser[]> => {
    try {
-     const response: AxiosResponse<{ users: IUser[] }> = await axiosInstance.get('/api/users');
-     return response.data.users;  // Adjust depending on the actual API response structure
+     const response: AxiosResponse<IUser[]> = await axiosInstance.get('/api/user');
+     return response.data;
    } catch (error) {
      throw new Error((error as IAppError).message || "Failed to fetch users");
    }

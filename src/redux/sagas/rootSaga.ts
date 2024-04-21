@@ -6,15 +6,15 @@ import { fetchAllUsersApi } from '../../api/usersApi';
 
 function* fetchExampleData() {
   try {
-    const res: { users: IUser[] } = yield call(fetchAllUsersApi);
-    yield put(fetchAllUsersSuccess(res.users));
+    const users: IUser[] = yield call(fetchAllUsersApi);
+    yield put(fetchAllUsersSuccess(users));
   } catch (e) {
     console.error('Failed to fetch data', e);
   }
 }
 
 function* watchFetchUsers() {
-  yield takeLatest('fetchAllUsers', fetchExampleData);
+  yield takeLatest('userList/fetchAllUsers', fetchExampleData);
 }
 
 export default function* rootSaga() {

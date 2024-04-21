@@ -17,6 +17,7 @@ const userListSlice = createSlice({
      },
       fetchAllUsersSuccess: (state, action: PayloadAction<IUser[]>) => {
        state.users = [...action.payload];
+       state.isLoading = false;
      },
   },
 });

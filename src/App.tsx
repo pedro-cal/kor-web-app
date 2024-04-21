@@ -1,6 +1,12 @@
+import UserList from "./routes/UserList"
+
 function App() {
 
-  return <h1>Test</h1>
+  return (
+    <main>
+      <UserList />
+    </main>
+  )
 }
 
 export default App
