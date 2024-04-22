@@ -43,8 +43,8 @@ const UserList: React.FC = () => {
   }, [dispatch])
   
   const handleRequestConnect = useCallback((inviteeId: string) => {
-    dispatch(requestConnection({inviterId: currentUser.id, inviteeId}));
-  }, [dispatch, currentUser.id])
+    dispatch(requestConnection({inviterId: currentUser?.id, inviteeId}));
+  }, [dispatch, currentUser?.id])
 
   useEffect(() => {
     handleFetchAllUsers();

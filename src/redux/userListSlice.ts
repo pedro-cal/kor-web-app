@@ -23,6 +23,14 @@ const userListSlice = createSlice({
        state.isLoading = false;
      },
      //@ts-expect-error-redux issue with action to be made available only for SAGA
+      fetchFriends: (state, action: PayloadAction<{currentUserId: string}>) => { //eslint-disable-line
+       state.isLoading = true;
+     },
+      fetchFriendsSuccess: (state, action: PayloadAction<IFriendship[]>) => {
+       state.friends = [...action.payload];
+       state.isLoading = false;
+     },
+     //@ts-expect-error-redux issue with action to be made available only for SAGA
       requestConnection: (state, action: PayloadAction<IConnectionPayload>) => { //eslint-disable-line
        state.isLoading = true;
      },
@@ -48,5 +56,5 @@ const userListSlice = createSlice({
   },
 });
 
-export const { fetchAllUsers, fetchAllUsersSuccess, submitStatus, submitStatusSuccess, submitStatusFail, requestConnection, requestConnectionSuccess, requestConnectionFail } = userListSlice.actions;
+export const { fetchAllUsers, fetchAllUsersSuccess, submitStatus, submitStatusSuccess, submitStatusFail, requestConnection, requestConnectionSuccess, requestConnectionFail, fetchFriends, fetchFriendsSuccess } = userListSlice.actions;
 export default userListSlice.reducer;
