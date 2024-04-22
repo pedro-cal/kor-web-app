@@ -11,3 +11,12 @@ export const fetchAllUsersApi = async (): Promise<IUser[]> => {
      throw new Error((error as IAppError).message || "Failed to fetch users");
    }
  }
+
+export const signUserApi = async (data: { username?: string, email?: string, imgUrl?: string}): Promise<IUser> => {
+   try {
+     const response: AxiosResponse<IUser> = await axiosInstance.post('/api/user', data);
+     return response.data;
+   } catch (error) {
+     throw new Error((error as IAppError).message || "Failed to fetch users");
+   }
+ }

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -9,17 +10,28 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
+import { Button } from '@mui/material';
+import LoginDialog from './LoginDialog';
+import { IRootState } from '../types/globalTypes';
+import { signUser, clearCurrentUser } from '../redux/globalSlice';
 
 export default function Header() {
+  const dispatch = useDispatch();
+  const { currentUser } = useSelector((state: IRootState) => state.global);
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [isOpen, setIsOpen] = React.useState(false);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<null | HTMLElement>(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  const handleDispatchSignUser = (payload: { username?: string, email?: string, imgUrl?: string}) => {
+    dispatch(signUser(payload))
+  }
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -78,14 +90,6 @@ export default function Header() {
       onClose={handleMobileMenuClose}
     >
       <MenuItem>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="error">
-            <MailIcon />
-          </Badge>
-        </IconButton>
-        <p>Messages</p>
-      </MenuItem>
-      <MenuItem>
         <IconButton
           size="large"
           aria-label="show new notifications"
@@ -109,12 +113,17 @@ export default function Header() {
         </IconButton>
         <p>Profile</p>
       </MenuItem>
+      <MenuItem onClick={handleProfileMenuOpen}>
+        <Button color="inherit">Login</Button>
+      </MenuItem>
     </Menu>
   );
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
+        <LoginDialog open={isOpen} handleClose={() => setIsOpen(false)} onSubmit={handleDispatchSignUser}/>
+
         <Toolbar>
           <IconButton
             size="large"
@@ -156,6 +165,18 @@ export default function Header() {
             >
               <AccountCircle />
             </IconButton>
+            {currentUser ? (
+                <Button color="inherit" sx={{ paddingLeft: 4 }} onClick={() => dispatch(clearCurrentUser())}>
+                  <Box display={'flex'} flexDirection={'column'} justifyContent={'center'} alignItems={'center'}>
+                    <Typography sx={{ fontSize: '8px'}}>{currentUser.username}</Typography>
+                    LOG OUT
+                  </Box>
+                </Button>
+              ) : (
+                <Button color="inherit" sx={{ paddingLeft: 4 }} onClick={() => setIsOpen(true)}>
+                  LOGIN
+                </Button>
+              )}
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
             <IconButton

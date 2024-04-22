@@ -13,19 +13,23 @@ const globalSlice = createSlice({
   name: 'global',
   initialState,
   reducers: {
-     signUserIn: (state) => {
+    clearCurrentUser: (state) => {
+      state.currentUser = undefined;
+    },
+    //eslint-disable-next-line
+      signUser: (state, _action: PayloadAction<{ username?: string; email?: string; imgUrl?: string }>) => {
         state.isLoading = true;
       },
-      signUserInSuccess: (state, action: PayloadAction<IUser>) => {
+      signUserSuccess: (state, action: PayloadAction<IUser>) => {
          state.currentUser = action.payload;
          state.isLoading = false;
       },
-      signUserInFail: (state, action: PayloadAction<IAppError>) => {
+      signUserFail: (state, action: PayloadAction<IAppError>) => {
          state.isLoading = false;
          state.error = action.payload
        },
   },
 });
 
-export const { signUserIn, signUserInSuccess } = globalSlice.actions;
+export const { signUser, signUserSuccess, signUserFail, clearCurrentUser } = globalSlice.actions;
 export default globalSlice.reducer;
