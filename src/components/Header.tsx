@@ -162,13 +162,23 @@ export default function Header() {
               aria-label="account of current user"
               aria-controls={menuId}
               aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
+              // onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <AccountCircle />
+              {currentUser && currentUser.imgUrl
+              ? <Box borderRadius={'50%'} width={30} height={30} overflow={'hidden'} border={'1px solid white'}>
+                  <img style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt='profile avatar' src={currentUser.imgUrl} />
+                </Box>
+              : <AccountCircle />}
             </IconButton>
             {currentUser ? (
-                <Button color="inherit" sx={{ paddingLeft: 4 }} onClick={() => dispatch(clearCurrentUser())}>
+                <Button
+                  color="inherit" sx={{ paddingLeft: 4 }}
+                  onClick={() => {
+                    dispatch(clearCurrentUser());
+                    localStorage.removeItem('currentUser');
+                  }}
+                >
                   <Box display={'flex'} flexDirection={'column'} justifyContent={'center'} alignItems={'center'}>
                     <Typography sx={{ fontSize: '8px'}}>{currentUser.username}</Typography>
                     LOG OUT

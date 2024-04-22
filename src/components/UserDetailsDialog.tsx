@@ -64,6 +64,7 @@ const UserDetailsDialog: React.FC<UserDetailsDialogProps> = ({ open, user, handl
                             label="Status"
                             type="text"
                             fullWidth
+                            disabled={!isCurrentUser}
                             value={status}
                             onChange={handleStatusChange}
                             error={!isValidStatus}

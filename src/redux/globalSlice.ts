@@ -15,6 +15,7 @@ const globalSlice = createSlice({
   reducers: {
     clearCurrentUser: (state) => {
       state.currentUser = undefined;
+      localStorage.removeItem('currentUser');
     },
     //eslint-disable-next-line
       signUser: (state, _action: PayloadAction<{ username?: string; email?: string; imgUrl?: string }>) => {
