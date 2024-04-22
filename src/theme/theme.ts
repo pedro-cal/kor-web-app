@@ -10,8 +10,8 @@ export const theme = createTheme({
         main: '#2D2D2D',
       },
       secondary: {
-         main: '#03a9f4',  // Light blue color
-      //   main: '#009688',  // Teal color
+        //  main: '#03a9f4',  // Light blue color
+        main: '#009688',  // Teal color
      },
    },
  });

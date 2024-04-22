@@ -16,10 +16,12 @@ import { Button } from '@mui/material';
 import LoginDialog from './LoginDialog';
 import { IRootState } from '../types/globalTypes';
 import { signUser, clearCurrentUser } from '../redux/globalSlice';
+import { getCurrentUser } from '../utils/utilFunctions';
 
 export default function Header() {
   const dispatch = useDispatch();
-  const { currentUser } = useSelector((state: IRootState) => state.global);
+  const stateUser = useSelector((state: IRootState) => state.global.currentUser);
+  const currentUser = getCurrentUser(stateUser);
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [isOpen, setIsOpen] = React.useState(false);

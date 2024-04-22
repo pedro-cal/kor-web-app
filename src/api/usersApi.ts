@@ -12,6 +12,18 @@ export const fetchAllUsersApi = async (): Promise<IUser[]> => {
    }
  }
 
+export const submitStatusApi = async (payload: {id: string, status: string}): Promise<IUser> => {
+   try {
+    const {id, status} = payload;
+    const body = { status };
+     console.log("🚀 ~ API submitStatusApi ~ payload:", payload)
+     const response: AxiosResponse<IUser> = await axiosInstance.put(`/api/user/status/${id}`, body);
+     return response.data;
+   } catch (error) {
+     throw new Error((error as IAppError).message || "Failed to fetch users");
+   }
+ }
+
 export const signUserApi = async (data: { username?: string, email?: string, imgUrl?: string}): Promise<IUser> => {
    try {
      const response: AxiosResponse<IUser> = await axiosInstance.post('/api/user', data);

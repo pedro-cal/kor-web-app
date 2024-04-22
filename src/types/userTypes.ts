@@ -13,3 +13,8 @@ export interface IUserListState {
    isLoading: boolean;
    error: IAppError | undefined;
  }
+
+ export interface IStatusPayload {
+   id: string;
+   status: string | undefined;
+ }
