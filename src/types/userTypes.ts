@@ -7,9 +7,17 @@ export interface IUser {
    status?: string;
    imgUrl?: string;
 }
+export interface IFriendship {
+  id: string;
+  inviterId: string;
+  inviteeId: string;
+  status: string;
+}
 
 export interface IUserListState {
    users: IUser[];
+   friends: IFriendship[],
+   newConnection: IFriendship | undefined,
    isLoading: boolean;
    error: IAppError | undefined;
  }
@@ -17,4 +25,9 @@ export interface IUserListState {
  export interface IStatusPayload {
    id: string;
    status: string | undefined;
+ }
+ 
+ export interface IConnectionPayload {
+   inviterId: string;
+   inviteeId: string;
  }

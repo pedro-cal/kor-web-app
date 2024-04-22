@@ -1,8 +1,8 @@
 // src/app/sagas.ts
 import { all, call, put, takeLatest } from 'redux-saga/effects';
-import { fetchAllUsersSuccess, submitStatusFail, submitStatusSuccess } from '../userListSlice';
-import { IUser } from '../../types/userTypes';
-import { fetchAllUsersApi, signUserApi, submitStatusApi } from '../../api/usersApi';
+import { fetchAllUsersSuccess, requestConnectionFail, requestConnectionSuccess, submitStatusFail, submitStatusSuccess } from '../userListSlice';
+import { IConnectionPayload, IFriendship, IUser } from '../../types/userTypes';
+import { fetchAllUsersApi, fetchFriendsApi, requestConnectionApi, signUserApi, submitStatusApi } from '../../api/usersApi';
 import { signUserFail, signUserSuccess } from '../globalSlice';
 import { PayloadAction } from '@reduxjs/toolkit';
 
@@ -14,6 +14,18 @@ function* onFetchAllUsers() {
     console.error('Failed to fetch data', e);
   }
 }
+
+function* onRequestConnection(action: PayloadAction<IConnectionPayload>) {
+  try {
+    const payload = action.payload;
+    const newConnection: IFriendship = yield call(requestConnectionApi, payload);
+    yield put(requestConnectionSuccess(newConnection));
+  } catch (err) {
+    const appErr = { message: (err as Error).message }
+    yield put(requestConnectionFail(appErr));
+  }
+}
+
 function* onSubmitStatus(action: PayloadAction<{ status: string, id: string }>) {
   try {
     const payload = action.payload;
@@ -35,6 +47,12 @@ function* onSignUser(action: PayloadAction<{ username?: string, email?: string, 
    try {
    const { payload } = action;
     const user: IUser = yield call(signUserApi, payload);
+    const { id } = user;
+    if (id) {
+      const userConnections: [] = yield call(fetchFriendsApi, id);
+      console.log("🚀 ~ function*onSignUser ~ userConnections:", userConnections)
+      
+    }
     yield put(signUserSuccess(user));
     localStorage.setItem('currentUser', JSON.stringify(user));
   } catch (err) {
@@ -49,6 +67,9 @@ function* watchFetchUsers() {
 function* watchSubmitStatus() {
   yield takeLatest('userList/submitStatus', onSubmitStatus);
 }
+function* watchRequestConnection() {
+  yield takeLatest('userList/requestConnection', onRequestConnection);
+}
 function* watchSignUser() {
   yield takeLatest('global/signUser', onSignUser);
 }
@@ -58,5 +79,6 @@ export default function* rootSaga() {
     watchFetchUsers(),
     watchSignUser(),
     watchSubmitStatus(),
+    watchRequestConnection(),
   ]);
 }

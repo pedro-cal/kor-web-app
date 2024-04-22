@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAllUsers, submitStatus } from '../redux/userListSlice';
+import { fetchAllUsers, requestConnection, submitStatus } from '../redux/userListSlice';
 import { IRootState } from '../types/globalTypes';
 import { Box, Button, Typography, styled } from '@mui/material';
 import UserCard from '../components/UserCard';
@@ -42,9 +42,9 @@ const UserList: React.FC = () => {
     dispatch(submitStatus(payload));
   }, [dispatch])
   
-  const handleRequestConnect = useCallback(() => {
-    // dispatch(fetchAllUsers());
-  }, [])
+  const handleRequestConnect = useCallback((inviteeId: string) => {
+    dispatch(requestConnection({inviterId: currentUser.id, inviteeId}));
+  }, [dispatch, currentUser.id])
 
   useEffect(() => {
     handleFetchAllUsers();
@@ -61,12 +61,14 @@ const UserList: React.FC = () => {
           <UserDetailsDialog
             open={openDetails}
             user={selectedUser}
+            disableConnect={!!currentUser}
             handleCancel={() => {
               setOpenDetails(false);
               setSelectedUser(undefined);
             }}
             isCurrentUser={isCurrentUser}
-            handleSubmit={isCurrentUser ? handleSubmitStatus : handleRequestConnect}
+            handleSubmitStatus={handleSubmitStatus}
+            handleRequestConnect={handleRequestConnect}
           />
           {currentUser &&
           <Box display={'flex'} marginTop={1} paddingX={2} width={'100%'} justifyContent={'center'}>

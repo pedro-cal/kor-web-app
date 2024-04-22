@@ -7,11 +7,13 @@ interface UserDetailsDialogProps {
     open: boolean;
     user: IUser | undefined;
     handleCancel: () => void;
-    handleSubmit: (arg0: {id: string, status: string | undefined}) => void;
+    handleSubmitStatus: (arg0: {id: string, status: string | undefined}) => void;
+    handleRequestConnect: (inviteeId: string) => void;
     isCurrentUser: boolean;
+    disableConnect: boolean;
 }
 
-const UserDetailsDialog: React.FC<UserDetailsDialogProps> = ({ open, user, handleCancel, handleSubmit, isCurrentUser }) => {
+const UserDetailsDialog: React.FC<UserDetailsDialogProps> = ({ open, user, handleCancel, handleRequestConnect, handleSubmitStatus, isCurrentUser, disableConnect }) => {
     const [status, setStatus] = useState<string | undefined>(user?.status);
     useEffect(() => {
         if (user?.status) setStatus(user.status)
@@ -74,14 +76,22 @@ const UserDetailsDialog: React.FC<UserDetailsDialogProps> = ({ open, user, handl
                             <Box display={'grid'} gridTemplateColumns={'1fr 1fr'} gap={1} width={'100%'} marginTop={2}>
                                 <Button variant='outlined' onClick={handleCancel}>Cancel</Button>
                                 <Button variant='contained' onClick={() => {
-                                    handleSubmit({id: user.id, status});
+                                    handleSubmitStatus({id: user.id, status});
                                     handleCancel();
                                 }} disabled={!isValidStatus}>Submit</Button>
                             </Box>
                         ) : (
                             <Box display={'grid'} gridTemplateColumns={'1fr 1fr'} gap={1} width={'100%'} marginTop={2}>
                                 <Button variant='outlined' onClick={handleCancel}>Cancel</Button>
-                                <Button variant='contained' color='secondary' onClick={() => {}}>Connect</Button>
+                                <Button
+                                    variant='contained'
+                                    color='secondary'
+                                    disabled={!disableConnect}
+                                    onClick={() => {
+                                        handleRequestConnect(user.id);
+                                        handleCancel();
+                                    }}
+                                >Connect</Button>
                             </Box>
                         )}
                     </Grid>
