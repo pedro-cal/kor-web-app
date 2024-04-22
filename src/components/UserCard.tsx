@@ -8,14 +8,16 @@ import avatarPlaceholder from '../assets/avatar-placeholder.webp';
 import { theme } from '../theme/theme';
 
 interface IUserCardProps {
-  user: IUser;
+  user: IUser | undefined;
+  handleOpenUserDetails: (clickedUser: IUser) => void;
 }
 
-export default function UserCard({ user }: IUserCardProps) {
+export default function UserCard({ user, handleOpenUserDetails }: IUserCardProps) {
   if (!user) return;
   const { id, username, email, status, imgUrl } = user;
+
   return (
-    <Card key={id} sx={{ maxWidth: 345 }}>
+    <Card key={id} sx={{ maxWidth: 345 }} onClick={() => handleOpenUserDetails(user)}>
       <CardActionArea>
         <CardMedia
           component="img"
@@ -26,10 +28,10 @@ export default function UserCard({ user }: IUserCardProps) {
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
-            {username}
+            {username ? `@${username}` : email}
           </Typography>
-          <Typography gutterBottom variant="h5" component="div">
-            {email}
+          <Typography gutterBottom component="div">
+            {username && email ? email : '-'}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {status}
