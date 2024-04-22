@@ -2,6 +2,19 @@ import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllUsers } from '../redux/userListSlice';
 import { IRootState } from '../types/globalTypes';
+import { Box, styled } from '@mui/material';
+import UserCard from '../components/UserCard';
+
+const CardsGrid = styled(Box)(({ theme }) => ({
+  display: 'grid',
+  gap: 22,
+  padding: '16px',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+  width: '80vw',
+  [theme.breakpoints.down('lg')]: {
+    width: '100%',
+  }
+})); 
 
 const UserList: React.FC = () => {
   const dispatch = useDispatch();
@@ -12,7 +25,7 @@ const UserList: React.FC = () => {
   }, [dispatch])
 
   useEffect(() => {
-    // handleFetchAllUsers();
+    handleFetchAllUsers();
   }, [handleFetchAllUsers]);
 
   return (
@@ -22,14 +35,14 @@ const UserList: React.FC = () => {
       ) : error ? (
         <p>Error: {error.message}</p>
       ) : (
-        <>
-          <button onClick={handleFetchAllUsers}>Fetch All Users</button>
-          <ul>
-            {users && users.map(user => (
-              <li key={user.id}>{user.username}</li>
+        <Box display='flex' width='100%' flexDirection='column' justifyContent={'center'} alignItems={'center'}>
+          <CardsGrid>
+            {(!users || !users?.length) && <p>No users found</p>}
+            {users && users.map((user) => (
+              <UserCard user={user}/>
             ))}
-          </ul>
-        </>
+          </CardsGrid>
+        </Box>
       )}
     </div>
   );
