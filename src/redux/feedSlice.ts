@@ -19,8 +19,8 @@ const feedSlice = createSlice({
     clearPosts: state => {
       state.posts = [];
     },
-    //eslint-disable-next-line
-   fetchPosts: (state) => {
+    //@ts-expect-error-redux issue with action to be made available only for SAGA
+   fetchPosts: (state, action: PayloadAction<{ id: string }>) => { // eslint-disable-line
       state.isLoading = true;
     },
     fetchPostsSuccess: (state, action: PayloadAction<IStatusPost[]>) => {

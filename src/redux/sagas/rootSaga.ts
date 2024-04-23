@@ -109,7 +109,7 @@ function* onSignUser(
     if (id) {
       const userFriends: [] = yield call(fetchFriendsApi, id);
       yield put(fetchFriendsSuccess(userFriends));
-      yield put(fetchPosts());
+      yield put(fetchPosts({ id }));
     }
     yield put(signUserSuccess(user));
     localStorage.setItem('currentUser', JSON.stringify(user));
@@ -136,7 +136,7 @@ function* onSubmitPost(action: PayloadAction<ISubmitPostPayload>) {
     yield call(submitPostApi, payload);
     //@ts-expect-error-redux issue with action to be made available only for SAGA
     yield put(fetchPostsSuccess());
-    yield put(fetchPosts());
+    yield put(fetchPosts({ id: payload.userId }));
   } catch (err) {
     const appErr = { message: (err as Error).message };
     yield put(fetchPostsFail(appErr));
