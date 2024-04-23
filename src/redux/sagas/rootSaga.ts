@@ -23,6 +23,15 @@ function* onFetchAllUsers() {
   try {
     const users: IUser[] = yield call(fetchAllUsersApi);
     yield put(fetchAllUsersSuccess(users));
+    const localUser = localStorage.getItem('currentUser');
+    const currentUser = localUser ? JSON.parse(localUser) : false;
+    if (currentUser?.id) {
+      const userFriends: IFriendship[] = yield call(
+        fetchFriendsApi,
+        currentUser.id
+      );
+      yield put(fetchFriendsSuccess(userFriends));
+    }
   } catch (e) {
     console.error('Failed to fetch data', e);
   }

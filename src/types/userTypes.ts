@@ -6,6 +6,8 @@ export interface IUser {
   email?: string;
   status?: string;
   imgUrl?: string;
+  friendStatus?: string;
+  isInviter?: boolean;
 }
 export interface IFriendship {
   id: string;

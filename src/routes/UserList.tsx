@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchAllUsers,
@@ -17,7 +17,7 @@ const CardsGrid = styled(Box)(({ theme }) => ({
   display: 'grid',
   gap: 22,
   padding: '16px',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+  gridTemplateColumns: 'repeat(4, minmax(200px, 1fr))',
   width: '80vw',
   [theme.breakpoints.down('lg')]: {
     width: '100%',
@@ -45,15 +45,30 @@ const UserList: React.FC = () => {
   const { users, isLoading, error } = useSelector(
     (state: IRootState) => state.userList
   );
-  const displayUsers = users.filter(u => u.id !== currentUser.id);
+  const [displayUsers, setDisplayUsers] = useState<IUser[]>(users);
   const [openDetails, setOpenDetails] = useState(false);
   const [showFriends, setShowFriends] = useState(false);
   const [selectedUser, setSelectedUser] = useState<IUser | undefined>(
     undefined
   );
 
-  const isCurrentUser =
-    selectedUser && currentUser ? selectedUser.id === currentUser.id : false;
+  useEffect(() => {
+    if (showFriends) {
+      setDisplayUsers(friends);
+    } else {
+      setDisplayUsers(users.filter(u => u.id !== currentUser?.id));
+    }
+
+    if (!currentUser) setShowFriends(false);
+  }, [showFriends, users, friends, currentUser]);
+
+  const isCurrentUser = useMemo(
+    () =>
+      selectedUser && currentUser
+        ? selectedUser?.id === currentUser?.id
+        : false,
+    [currentUser, selectedUser]
+  );
 
   const handleToggleShowFriends = useCallback(() => {
     setShowFriends(!showFriends);
@@ -84,7 +99,7 @@ const UserList: React.FC = () => {
 
   useEffect(() => {
     handleFetchAllUsers();
-  }, [handleFetchAllUsers]);
+  }, []); //eslint-disable-line
 
   return (
     <div>
@@ -154,20 +169,11 @@ const UserList: React.FC = () => {
           <CardsGrid>
             {(!displayUsers || !displayUsers?.length) && <p>No users found</p>}
             {displayUsers &&
-              !showFriends &&
               displayUsers.map(user => (
                 <UserCard
                   key={user.id}
                   user={user}
-                  handleOpenUserDetails={handleOpenUserDetails}
-                />
-              ))}
-            {friends &&
-              showFriends &&
-              friends.map(user => (
-                <UserCard
-                  key={user.id}
-                  user={user}
+                  showStatus={showFriends}
                   handleOpenUserDetails={handleOpenUserDetails}
                 />
               ))}

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -17,12 +17,15 @@ import LoginDialog from './LoginDialog';
 import { IRootState } from '../types/globalTypes';
 import { signUser, clearCurrentUser } from '../redux/globalSlice';
 import { getCurrentUser } from '../utils/utilFunctions';
+import { IUser } from '../types/userTypes';
 
 export default function Header() {
   const dispatch = useDispatch();
-  const stateUser = useSelector((state: IRootState) => state.global.currentUser);
-  const currentUser = getCurrentUser(stateUser);
+  const stateUser = useSelector(
+    (state: IRootState) => state.global.currentUser
+  );
 
+  const [currentUser, setCurrentUser] = React.useState<IUser>();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [isOpen, setIsOpen] = React.useState(false);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
@@ -31,9 +34,17 @@ export default function Header() {
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-  const handleDispatchSignUser = (payload: { username?: string, email?: string, imgUrl?: string}) => {
-    dispatch(signUser(payload))
-  }
+  useEffect(() => {
+    setCurrentUser(getCurrentUser(stateUser));
+  }, [stateUser]);
+
+  const handleDispatchSignUser = (payload: {
+    username?: string;
+    email?: string;
+    imgUrl?: string;
+  }) => {
+    dispatch(signUser(payload));
+  };
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -124,7 +135,11 @@ export default function Header() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
-        <LoginDialog open={isOpen} handleClose={() => setIsOpen(false)} onSubmit={handleDispatchSignUser}/>
+        <LoginDialog
+          open={isOpen}
+          handleClose={() => setIsOpen(false)}
+          onSubmit={handleDispatchSignUser}
+        />
 
         <Toolbar>
           <IconButton
@@ -142,9 +157,9 @@ export default function Header() {
             component="div"
             sx={{ display: { xs: 'none', sm: 'block' } }}
           >
-            KOR Test
+            Supah Friends
           </Typography>
-          
+
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             <IconButton
@@ -165,30 +180,58 @@ export default function Header() {
               // onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              {currentUser && currentUser.imgUrl
-              ? <Box borderRadius={'50%'} width={30} height={30} overflow={'hidden'} border={'1px solid white'}>
-                  <img style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt='profile avatar' src={currentUser.imgUrl} />
+              {currentUser && currentUser.imgUrl ? (
+                <Box
+                  borderRadius={'50%'}
+                  width={30}
+                  height={30}
+                  overflow={'hidden'}
+                  border={'1px solid white'}
+                >
+                  <img
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                    }}
+                    alt="profile avatar"
+                    src={currentUser.imgUrl}
+                  />
                 </Box>
-              : <AccountCircle />}
+              ) : (
+                <AccountCircle />
+              )}
             </IconButton>
             {currentUser ? (
-                <Button
-                  color="inherit" sx={{ paddingLeft: 4 }}
-                  onClick={() => {
-                    dispatch(clearCurrentUser());
-                    localStorage.removeItem('currentUser');
-                  }}
+              <Button
+                color="inherit"
+                sx={{ paddingLeft: 4 }}
+                onClick={() => {
+                  dispatch(clearCurrentUser());
+                  localStorage.removeItem('currentUser');
+                }}
+              >
+                <Box
+                  display={'flex'}
+                  flexDirection={'column'}
+                  justifyContent={'center'}
+                  alignItems={'center'}
                 >
-                  <Box display={'flex'} flexDirection={'column'} justifyContent={'center'} alignItems={'center'}>
-                    <Typography sx={{ fontSize: '8px'}}>{currentUser.username}</Typography>
-                    LOG OUT
-                  </Box>
-                </Button>
-              ) : (
-                <Button color="inherit" sx={{ paddingLeft: 4 }} onClick={() => setIsOpen(true)}>
-                  LOGIN
-                </Button>
-              )}
+                  <Typography sx={{ fontSize: '8px' }}>
+                    {currentUser.username}
+                  </Typography>
+                  LOG OUT
+                </Box>
+              </Button>
+            ) : (
+              <Button
+                color="inherit"
+                sx={{ paddingLeft: 4 }}
+                onClick={() => setIsOpen(true)}
+              >
+                LOGIN
+              </Button>
+            )}
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
             <IconButton
