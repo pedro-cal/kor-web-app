@@ -7,7 +7,9 @@ import {
   TextField,
   Grid,
   Box,
+  IconButton,
 } from '@mui/material';
+import { Close as CloseIcon } from '@mui/icons-material';
 import { IRespondRequestPayload, IUser } from '../types/userTypes';
 import avatarPlaceholder from '../assets/avatar-placeholder.webp';
 
@@ -45,6 +47,8 @@ const UserDetailsDialog: React.FC<UserDetailsDialogProps> = ({
 
   if (!user) return;
   const { isInviter, friendStatus } = user;
+  const isAccepted = friendStatus === 'accepted';
+  const isPending = isInviter && !isAccepted;
 
   const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStatus(event.target.value);
@@ -57,7 +61,18 @@ const UserDetailsDialog: React.FC<UserDetailsDialogProps> = ({
       aria-labelledby="user-details-dialog-title"
       PaperProps={{ style: { width: '600px', height: '400px' } }}
     >
-      <DialogTitle id="user-details-dialog-title">User Details</DialogTitle>
+      <DialogTitle id="user-details-dialog-title">
+        User Details
+        <IconButton
+          edge="end"
+          color="primary"
+          onClick={handleCancel}
+          aria-label="close"
+          sx={{ position: 'absolute', right: 24, top: 8 }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
           <Grid item xs={6}>
@@ -131,9 +146,10 @@ const UserDetailsDialog: React.FC<UserDetailsDialogProps> = ({
                 marginTop={2}
               >
                 <Button
-                  variant="outlined"
+                  variant={isPending ? 'contained' : 'outlined'}
+                  color={isPending ? 'error' : 'primary'}
                   onClick={() => {
-                    if (isInviter) {
+                    if (isPending) {
                       handleRespondRequest({
                         inviterId: user.id,
                         status: 'rejected',
@@ -143,12 +159,16 @@ const UserDetailsDialog: React.FC<UserDetailsDialogProps> = ({
                     }
                   }}
                 >
-                  {isInviter ? 'Reject' : 'Close'}
+                  {isInviter && !isAccepted ? 'Reject' : 'Close'}
                 </Button>
                 <Button
                   variant="contained"
                   color="secondary"
-                  disabled={!disableConnect || (!isInviter && !!friendStatus)}
+                  disabled={
+                    !disableConnect ||
+                    (!isInviter && !!friendStatus) ||
+                    friendStatus === 'accepted'
+                  }
                   onClick={() => {
                     if (isInviter) {
                       handleRespondRequest({

@@ -119,7 +119,10 @@ export default function Header() {
           aria-label="show new notifications"
           color="inherit"
         >
-          <Badge badgeContent={notifications?.length || null} color="error">
+          <Badge
+            badgeContent={currentUser ? notifications?.length : null}
+            color="error"
+          >
             <NotificationsIcon />
           </Badge>
         </IconButton>
@@ -208,7 +211,10 @@ export default function Header() {
               color="inherit"
               onClick={() => navigate('/friends')}
             >
-              <Badge badgeContent={notifications?.length || null} color="error">
+              <Badge
+                badgeContent={currentUser ? notifications?.length : null}
+                color="error"
+              >
                 <NotificationsIcon />
               </Badge>
             </IconButton>

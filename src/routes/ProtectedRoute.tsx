@@ -14,7 +14,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
 
   if (!currentUser) {
     // If no user is logged in, redirect to login page
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return element; // Return the element that should be rendered
