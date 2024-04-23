@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import { IUser } from '../types/userTypes';
+import { IFriendship, IRespondRequestPayload, IUser } from '../types/userTypes';
 import axiosInstance from './axios';
 import { IAppError } from '../types/globalTypes';
 
@@ -21,6 +21,21 @@ export const fetchFriendsApi = async (id: string): Promise<[]> => {
     return response.data;
   } catch (error) {
     throw new Error((error as IAppError).message || 'Failed to fetch friends');
+  }
+};
+
+export const respondRequestApi = async (
+  payload: IRespondRequestPayload
+): Promise<IFriendship> => {
+  try {
+    const body = payload;
+    const response: AxiosResponse<IFriendship> = await axiosInstance.put(
+      '/api/friend/',
+      body
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error((error as IAppError).message || 'Failed to fetch users');
   }
 };
 

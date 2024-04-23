@@ -44,8 +44,8 @@ export default function UserCard({
                     ? 'requested'
                     : friendStatus
                 }
-                color="primary"
-                variant="outlined"
+                color={friendStatus === 'accepted' ? 'secondary' : 'primary'}
+                variant={friendStatus === 'accepted' ? 'filled' : 'outlined'}
                 size="small"
               />
             </Box>

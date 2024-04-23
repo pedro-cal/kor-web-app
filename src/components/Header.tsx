@@ -24,8 +24,10 @@ export default function Header() {
   const stateUser = useSelector(
     (state: IRootState) => state.global.currentUser
   );
+  const friends = useSelector((state: IRootState) => state.userList.friends);
 
   const [currentUser, setCurrentUser] = React.useState<IUser>();
+  const [notifications, setNotifications] = React.useState<IUser[]>([]);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [isOpen, setIsOpen] = React.useState(false);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
@@ -37,6 +39,13 @@ export default function Header() {
   useEffect(() => {
     setCurrentUser(getCurrentUser(stateUser));
   }, [stateUser]);
+
+  useEffect(() => {
+    const notifications = friends
+      ? friends.filter(f => !!f.isInviter && f.friendStatus === 'pending')
+      : [];
+    setNotifications(notifications);
+  }, [friends]);
 
   const handleDispatchSignUser = (payload: {
     username?: string;
@@ -108,7 +117,7 @@ export default function Header() {
           aria-label="show new notifications"
           color="inherit"
         >
-          <Badge badgeContent={0} color="error">
+          <Badge badgeContent={notifications?.length || null} color="error">
             <NotificationsIcon />
           </Badge>
         </IconButton>
@@ -167,7 +176,7 @@ export default function Header() {
               aria-label="show new notifications"
               color="inherit"
             >
-              <Badge badgeContent={0} color="error">
+              <Badge badgeContent={notifications?.length || null} color="error">
                 <NotificationsIcon />
               </Badge>
             </IconButton>

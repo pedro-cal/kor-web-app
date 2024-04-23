@@ -33,3 +33,7 @@ export interface IConnectionPayload {
   inviterId: string;
   inviteeId: string;
 }
+
+export interface IRespondRequestPayload extends IConnectionPayload {
+  status: string;
+}

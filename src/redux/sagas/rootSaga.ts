@@ -1,18 +1,26 @@
 // src/app/sagas.ts
 import { all, call, put, takeLatest } from 'redux-saga/effects';
 import {
+  fetchAllUsers,
   fetchAllUsersSuccess,
   fetchFriendsSuccess,
   requestConnectionFail,
   requestConnectionSuccess,
+  respondRequestSuccess,
   submitStatusFail,
   submitStatusSuccess,
 } from '../userListSlice';
-import { IConnectionPayload, IFriendship, IUser } from '../../types/userTypes';
+import {
+  IConnectionPayload,
+  IFriendship,
+  IRespondRequestPayload,
+  IUser,
+} from '../../types/userTypes';
 import {
   fetchAllUsersApi,
   fetchFriendsApi,
   requestConnectionApi,
+  respondRequestApi,
   signUserApi,
   submitStatusApi,
 } from '../../api/usersApi';
@@ -53,6 +61,19 @@ function* onRequestConnection(action: PayloadAction<IConnectionPayload>) {
   } catch (err) {
     const appErr = { message: (err as Error).message };
     yield put(requestConnectionFail(appErr));
+  }
+}
+
+function* onRespondRequest(action: PayloadAction<IRespondRequestPayload>) {
+  try {
+    const payload = action.payload;
+    yield call(respondRequestApi, payload);
+    yield put(fetchAllUsers());
+
+    yield put(respondRequestSuccess());
+  } catch (err) {
+    const appErr = { message: (err as Error).message };
+    yield put(submitStatusFail(appErr));
   }
 }
 
@@ -103,6 +124,9 @@ function* watchSubmitStatus() {
 function* watchRequestConnection() {
   yield takeLatest('userList/requestConnection', onRequestConnection);
 }
+function* watchRespondRequest() {
+  yield takeLatest('userList/respondRequest', onRespondRequest);
+}
 function* watchSignUser() {
   yield takeLatest('global/signUser', onSignUser);
 }
@@ -113,5 +137,6 @@ export default function* rootSaga() {
     watchSignUser(),
     watchSubmitStatus(),
     watchRequestConnection(),
+    watchRespondRequest(),
   ]);
 }

@@ -3,13 +3,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchAllUsers,
   requestConnection,
+  respondRequest,
   submitStatus,
 } from '../redux/userListSlice';
 import { IRootState } from '../types/globalTypes';
 import { Box, Button, Typography, styled } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import UserCard from '../components/UserCard';
-import { IStatusPayload, IUser } from '../types/userTypes';
+import {
+  IRespondRequestPayload,
+  IStatusPayload,
+  IUser,
+} from '../types/userTypes';
 import UserDetailsDialog from '../components/UserDetailsDialog';
 import { getCurrentUser } from '../utils/utilFunctions';
 
@@ -45,22 +50,16 @@ const UserList: React.FC = () => {
   const { users, isLoading, error } = useSelector(
     (state: IRootState) => state.userList
   );
-  const [displayUsers, setDisplayUsers] = useState<IUser[]>(users);
   const [openDetails, setOpenDetails] = useState(false);
   const [showFriends, setShowFriends] = useState(false);
   const [selectedUser, setSelectedUser] = useState<IUser | undefined>(
     undefined
   );
+  const displayUsers = showFriends ? friends : users;
 
   useEffect(() => {
-    if (showFriends) {
-      setDisplayUsers(friends);
-    } else {
-      setDisplayUsers(users.filter(u => u.id !== currentUser?.id));
-    }
-
     if (!currentUser) setShowFriends(false);
-  }, [showFriends, users, friends, currentUser]);
+  }, [currentUser]);
 
   const isCurrentUser = useMemo(
     () =>
@@ -88,6 +87,13 @@ const UserList: React.FC = () => {
       dispatch(submitStatus(payload));
     },
     [dispatch]
+  );
+
+  const handleRespondRequest = useCallback(
+    (payload: Pick<IRespondRequestPayload, 'inviterId' | 'status'>) => {
+      dispatch(respondRequest({ ...payload, inviteeId: currentUser?.id }));
+    },
+    [dispatch, currentUser?.id]
   );
 
   const handleRequestConnect = useCallback(
@@ -126,6 +132,7 @@ const UserList: React.FC = () => {
             isCurrentUser={isCurrentUser}
             handleSubmitStatus={handleSubmitStatus}
             handleRequestConnect={handleRequestConnect}
+            handleRespondRequest={handleRespondRequest}
           />
           {currentUser && (
             <StatusBar

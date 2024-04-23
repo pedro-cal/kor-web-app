@@ -8,7 +8,7 @@ import {
   Grid,
   Box,
 } from '@mui/material';
-import { IUser } from '../types/userTypes';
+import { IRespondRequestPayload, IUser } from '../types/userTypes';
 import avatarPlaceholder from '../assets/avatar-placeholder.webp';
 
 interface UserDetailsDialogProps {
@@ -20,6 +20,9 @@ interface UserDetailsDialogProps {
     status: string | undefined;
   }) => void;
   handleRequestConnect: (inviteeId: string) => void;
+  handleRespondRequest: (
+    arg0: Pick<IRespondRequestPayload, 'inviterId' | 'status'>
+  ) => void;
   isCurrentUser: boolean;
   disableConnect: boolean;
 }
@@ -30,21 +33,22 @@ const UserDetailsDialog: React.FC<UserDetailsDialogProps> = ({
   handleCancel,
   handleRequestConnect,
   handleSubmitStatus,
+  handleRespondRequest,
   isCurrentUser,
   disableConnect,
 }) => {
   const [status, setStatus] = useState<string | undefined>(user?.status);
+  const isValidStatus = status && status.trim() !== '';
   useEffect(() => {
     if (user?.status) setStatus(user.status);
   }, [user]);
 
   if (!user) return;
+  const { isInviter, friendStatus } = user;
 
   const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStatus(event.target.value);
   };
-
-  const isValidStatus = status && status.trim() !== '';
 
   return (
     <Dialog
@@ -126,19 +130,38 @@ const UserDetailsDialog: React.FC<UserDetailsDialogProps> = ({
                 width={'100%'}
                 marginTop={2}
               >
-                <Button variant="outlined" onClick={handleCancel}>
-                  Close
+                <Button
+                  variant="outlined"
+                  onClick={() => {
+                    if (isInviter) {
+                      handleRespondRequest({
+                        inviterId: user.id,
+                        status: 'rejected',
+                      });
+                    } else {
+                      handleCancel();
+                    }
+                  }}
+                >
+                  {isInviter ? 'Reject' : 'Close'}
                 </Button>
                 <Button
                   variant="contained"
                   color="secondary"
-                  disabled={!disableConnect || !!user.friendStatus}
+                  disabled={!disableConnect || (!isInviter && !!friendStatus)}
                   onClick={() => {
-                    handleRequestConnect(user.id);
+                    if (isInviter) {
+                      handleRespondRequest({
+                        inviterId: user.id,
+                        status: 'accepted',
+                      });
+                    } else {
+                      handleRequestConnect(user.id);
+                    }
                     handleCancel();
                   }}
                 >
-                  Connect
+                  {isInviter ? 'Accept' : 'Connect'}
                 </Button>
               </Box>
             )}
