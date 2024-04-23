@@ -45,6 +45,13 @@ const feedSlice = createSlice({
   },
 });
 
-export const { clearPosts, fetchPosts, fetchPostsSuccess, fetchPostsFail } =
-  feedSlice.actions;
+export const {
+  clearPosts,
+  fetchPosts,
+  fetchPostsSuccess,
+  fetchPostsFail,
+  submitPost,
+  submitPostSuccess,
+  submitPostFail,
+} = feedSlice.actions;
 export default feedSlice.reducer;

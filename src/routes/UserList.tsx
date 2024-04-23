@@ -46,9 +46,9 @@ const UserList: React.FC = () => {
   const stateUser = useSelector(
     (state: IRootState) => state.global.currentUser
   );
+  const currentUser = getCurrentUser(stateUser);
   const friends = useSelector((state: IRootState) => state.userList.friends);
   const location = useLocation();
-  const currentUser = getCurrentUser(stateUser);
   const { users, isLoading, error } = useSelector(
     (state: IRootState) => state.userList
   );

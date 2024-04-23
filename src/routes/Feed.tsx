@@ -1,10 +1,12 @@
 import { Box, IconButton, TextField } from '@mui/material';
 import StatusPostCard from '../components/StatusPostCard';
 import { IRootState } from '../types/globalTypes';
-import { useSelector } from 'react-redux';
-import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 import SendIcon from '@mui/icons-material/Send';
 import { styled } from '@mui/system';
+import { getCurrentUser } from '../utils/utilFunctions';
+import { fetchPosts, submitPost } from '../redux/feedSlice';
 
 const FeedBox = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -17,28 +19,35 @@ const FeedBox = styled(Box)(({ theme }) => ({
 }));
 
 export default function Feed() {
+  const dispatch = useDispatch();
   const posts = useSelector((state: IRootState) => state?.feed?.posts);
+  const stateUser = useSelector(
+    (state: IRootState) => state.global.currentUser
+  );
+  const currentUser = getCurrentUser(stateUser);
 
   const [text, setText] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
 
+  useEffect(() => {
+    dispatch(fetchPosts({ id: currentUser?.id }));
+  }, []); // eslint-disable-line
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setText(event.target.value);
-    // Reset error state on text change
     if (error && event.target.value.trim() !== '') {
       setError(false);
     }
   };
 
   const handleSubmit = () => {
-    // Check if the text is not just empty spaces
     if (text.trim() === '') {
       setError(true);
       return;
     }
 
-    console.log('Posting status:', text); // Replace with actual post logic
-    setText(''); // Clear text field after posting
+    dispatch(submitPost({ userId: currentUser?.id, statusText: text }));
+    setText('');
   };
 
   return (

@@ -123,7 +123,12 @@ function* onFetchPosts(action: PayloadAction<{ id: string }>) {
   try {
     const payload = action.payload;
     const posts: IStatusPost[] = yield call(fetchPostsApi, payload.id);
-    yield put(fetchPostsSuccess(posts));
+    const sortedPosts = posts.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+
+    yield put(fetchPostsSuccess(sortedPosts));
   } catch (err) {
     const appErr = { message: (err as Error).message };
     yield put(fetchPostsFail(appErr));
@@ -134,8 +139,6 @@ function* onSubmitPost(action: PayloadAction<ISubmitPostPayload>) {
   try {
     const payload = action.payload;
     yield call(submitPostApi, payload);
-    //@ts-expect-error-redux issue with action to be made available only for SAGA
-    yield put(fetchPostsSuccess());
     yield put(fetchPosts({ id: payload.userId }));
   } catch (err) {
     const appErr = { message: (err as Error).message };
