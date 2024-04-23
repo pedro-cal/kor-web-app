@@ -79,7 +79,7 @@ export default function Feed() {
       <Box display={'flex'} flexDirection={'column'} gap={'24px'}>
         {posts &&
           !!posts.length &&
-          posts.map(post => <StatusPostCard statusPost={post} />)}
+          posts.map(post => <StatusPostCard key={post.id} statusPost={post} />)}
       </Box>
     </Box>
   );

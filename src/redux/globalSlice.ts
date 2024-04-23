@@ -12,6 +12,10 @@ const globalSlice = createSlice({
   name: 'global',
   initialState,
   reducers: {
+    initialAppLoader: () => {},
+    initialAppLoaderSuccess: (state, action: PayloadAction<IUser>) => {
+      state.currentUser = action.payload;
+    },
     clearCurrentUser: state => {
       state.currentUser = undefined;
       localStorage.removeItem('currentUser');
@@ -31,6 +35,12 @@ const globalSlice = createSlice({
   },
 });
 
-export const { signUser, signUserSuccess, signUserFail, clearCurrentUser } =
-  globalSlice.actions;
+export const {
+  signUser,
+  signUserSuccess,
+  signUserFail,
+  clearCurrentUser,
+  initialAppLoader,
+  initialAppLoaderSuccess,
+} = globalSlice.actions;
 export default globalSlice.reducer;

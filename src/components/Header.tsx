@@ -179,22 +179,26 @@ export default function Header() {
           >
             Users
           </Button>
-          <Button
-            color="inherit"
-            component={NavLink}
-            to="/friends"
-            sx={{ my: 2, color: 'white', display: 'block' }}
-          >
-            Friends
-          </Button>
-          <Button
-            color="inherit"
-            component={NavLink}
-            to="/feed"
-            sx={{ my: 2, color: 'white', display: 'block' }}
-          >
-            Feed
-          </Button>
+          {currentUser && (
+            <>
+              <Button
+                color="inherit"
+                component={NavLink}
+                to="/friends"
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                Friends
+              </Button>
+              <Button
+                color="inherit"
+                component={NavLink}
+                to="/feed"
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                Feed
+              </Button>
+            </>
+          )}
 
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>

@@ -24,11 +24,33 @@ import {
   signUserApi,
   submitStatusApi,
 } from '../../api/usersApi';
-import { signUserFail, signUserSuccess } from '../globalSlice';
+import {
+  initialAppLoaderSuccess,
+  signUserFail,
+  signUserSuccess,
+} from '../globalSlice';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { fetchPostsApi, submitPostApi } from '../../api/feedApi';
 import { ISubmitPostPayload, IStatusPost } from '../../types/feedTypes';
 import { fetchPosts, fetchPostsFail, fetchPostsSuccess } from '../feedSlice';
+
+function* onInitialAppLoader() {
+  try {
+    const localUser = localStorage.getItem('currentUser');
+    const currentUser = localUser ? JSON.parse(localUser) : false;
+    if (currentUser?.id) {
+      yield put(initialAppLoaderSuccess(currentUser));
+      const userFriends: IFriendship[] = yield call(
+        fetchFriendsApi,
+        currentUser.id
+      );
+      yield put(fetchFriendsSuccess(userFriends));
+    }
+    yield put(fetchAllUsers());
+  } catch (e) {
+    console.error('Failed to fetch data', e);
+  }
+}
 
 function* onFetchAllUsers() {
   try {
@@ -146,6 +168,9 @@ function* onSubmitPost(action: PayloadAction<ISubmitPostPayload>) {
   }
 }
 
+function* watchInitialAppLoader() {
+  yield takeLatest('global/initialAppLoader', onInitialAppLoader);
+}
 function* watchFetchUsers() {
   yield takeLatest('userList/fetchAllUsers', onFetchAllUsers);
 }
@@ -177,5 +202,6 @@ export default function* rootSaga() {
     watchRespondRequest(),
     watchFetchPosts(),
     watchSubmitPost(),
+    watchInitialAppLoader(),
   ]);
 }
