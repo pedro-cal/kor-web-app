@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { NavLink, useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -25,6 +26,7 @@ export default function Header() {
     (state: IRootState) => state.global.currentUser
   );
   const friends = useSelector((state: IRootState) => state.userList.friends);
+  const navigate = useNavigate();
 
   const [currentUser, setCurrentUser] = React.useState<IUser>();
   const [notifications, setNotifications] = React.useState<IUser[]>([]);
@@ -164,10 +166,35 @@ export default function Header() {
             variant="h6"
             noWrap
             component="div"
-            sx={{ display: { xs: 'none', sm: 'block' } }}
+            sx={{ display: { xs: 'none', sm: 'block' }, marginRight: '32px' }}
           >
             Supah Friends
           </Typography>
+
+          <Button
+            color="inherit"
+            component={NavLink}
+            to="/"
+            sx={{ my: 2, color: 'white', display: 'block' }}
+          >
+            Users
+          </Button>
+          <Button
+            color="inherit"
+            component={NavLink}
+            to="/friends"
+            sx={{ my: 2, color: 'white', display: 'block' }}
+          >
+            Friends
+          </Button>
+          <Button
+            color="inherit"
+            component={NavLink}
+            to="/feed"
+            sx={{ my: 2, color: 'white', display: 'block' }}
+          >
+            Feed
+          </Button>
 
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
@@ -175,6 +202,7 @@ export default function Header() {
               size="large"
               aria-label="show new notifications"
               color="inherit"
+              onClick={() => navigate('/friends')}
             >
               <Badge badgeContent={notifications?.length || null} color="error">
                 <NotificationsIcon />

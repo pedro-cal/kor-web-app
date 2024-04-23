@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback, useState, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchAllUsers,
@@ -46,6 +47,7 @@ const UserList: React.FC = () => {
     (state: IRootState) => state.global.currentUser
   );
   const friends = useSelector((state: IRootState) => state.userList.friends);
+  const location = useLocation();
   const currentUser = getCurrentUser(stateUser);
   const { users, isLoading, error } = useSelector(
     (state: IRootState) => state.userList
@@ -60,6 +62,11 @@ const UserList: React.FC = () => {
   useEffect(() => {
     if (!currentUser) setShowFriends(false);
   }, [currentUser]);
+
+  useEffect(() => {
+    // Set showFriends to true if the current path is '/friends', false otherwise
+    setShowFriends(location.pathname === '/friends');
+  }, [location]);
 
   const isCurrentUser = useMemo(
     () =>
@@ -143,7 +150,7 @@ const UserList: React.FC = () => {
               justifyContent={'center'}
             >
               <Box padding={1}>
-                <Typography>Your current status: </Typography>
+                <Typography>Your current tagline: </Typography>
               </Box>
               <Box
                 border={'1px solid'}
@@ -161,7 +168,7 @@ const UserList: React.FC = () => {
                   handleOpenUserDetails(currentUser);
                 }}
               >
-                Update Status
+                Update Tagline
               </Button>
               <Button
                 variant="outlined"

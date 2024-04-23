@@ -26,6 +26,9 @@ import {
 } from '../../api/usersApi';
 import { signUserFail, signUserSuccess } from '../globalSlice';
 import { PayloadAction } from '@reduxjs/toolkit';
+import { fetchPostsApi, submitPostApi } from '../../api/feedApi';
+import { ISubmitPostPayload, IStatusPost } from '../../types/feedTypes';
+import { fetchPosts, fetchPostsFail, fetchPostsSuccess } from '../feedSlice';
 
 function* onFetchAllUsers() {
   try {
@@ -106,12 +109,37 @@ function* onSignUser(
     if (id) {
       const userFriends: [] = yield call(fetchFriendsApi, id);
       yield put(fetchFriendsSuccess(userFriends));
+      yield put(fetchPosts());
     }
     yield put(signUserSuccess(user));
     localStorage.setItem('currentUser', JSON.stringify(user));
   } catch (err) {
     const appErr = { message: (err as Error).message };
     yield put(signUserFail(appErr));
+  }
+}
+
+function* onFetchPosts(action: PayloadAction<{ id: string }>) {
+  try {
+    const payload = action.payload;
+    const posts: IStatusPost[] = yield call(fetchPostsApi, payload.id);
+    yield put(fetchPostsSuccess(posts));
+  } catch (err) {
+    const appErr = { message: (err as Error).message };
+    yield put(fetchPostsFail(appErr));
+  }
+}
+
+function* onSubmitPost(action: PayloadAction<ISubmitPostPayload>) {
+  try {
+    const payload = action.payload;
+    yield call(submitPostApi, payload);
+    //@ts-expect-error-redux issue with action to be made available only for SAGA
+    yield put(fetchPostsSuccess());
+    yield put(fetchPosts());
+  } catch (err) {
+    const appErr = { message: (err as Error).message };
+    yield put(fetchPostsFail(appErr));
   }
 }
 
@@ -130,6 +158,12 @@ function* watchRespondRequest() {
 function* watchSignUser() {
   yield takeLatest('global/signUser', onSignUser);
 }
+function* watchFetchPosts() {
+  yield takeLatest('feed/fetchPosts', onFetchPosts);
+}
+function* watchSubmitPost() {
+  yield takeLatest('feed/submitPost', onSubmitPost);
+}
 
 export default function* rootSaga() {
   yield all([
@@ -138,5 +172,7 @@ export default function* rootSaga() {
     watchSubmitStatus(),
     watchRequestConnection(),
     watchRespondRequest(),
+    watchFetchPosts(),
+    watchSubmitPost(),
   ]);
 }

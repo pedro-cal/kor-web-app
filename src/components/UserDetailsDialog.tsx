@@ -91,7 +91,7 @@ const UserDetailsDialog: React.FC<UserDetailsDialogProps> = ({
             />
             <TextField
               margin="dense"
-              label="Status"
+              label="Tagline"
               type="text"
               fullWidth
               disabled={!isCurrentUser}
