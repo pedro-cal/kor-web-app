@@ -4,6 +4,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { IStatusPost } from '../types/feedTypes';
+import avatarPlaceholder from '../assets/avatar-placeholder.webp';
 
 interface StatusPostCardProps {
   statusPost: IStatusPost;
@@ -16,8 +17,8 @@ export default function StatusPostCard({ statusPost }: StatusPostCardProps) {
   const { statusText } = statusPost;
 
   return (
-    <Card sx={{ display: 'flex' }}>
-      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+    <Card sx={{ display: 'flex', height: '200px' }}>
+      <Box sx={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
         <CardContent sx={{ flex: '1 0 auto' }}>
           <Typography component="div" variant="h5">
             {username ? `@${username}` : email}
@@ -34,7 +35,7 @@ export default function StatusPostCard({ statusPost }: StatusPostCardProps) {
       <CardMedia
         component="img"
         sx={{ width: '30%' }}
-        image={imgUrl}
+        image={imgUrl || avatarPlaceholder}
         alt="user avatar in post"
       />
     </Card>

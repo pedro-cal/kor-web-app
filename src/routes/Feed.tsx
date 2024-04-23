@@ -10,7 +10,7 @@ const FeedBox = styled(Box)(({ theme }) => ({
   display: 'flex',
   gap: theme.spacing(2),
   padding: theme.spacing(2),
-  width: '80vw',
+  width: '60vw',
   [theme.breakpoints.down('lg')]: {
     width: '100%',
   },
@@ -42,7 +42,12 @@ export default function Feed() {
   };
 
   return (
-    <Box display={'flex'} flexDirection={'column'} alignItems={'center'}>
+    <Box
+      display={'flex'}
+      flexDirection={'column'}
+      alignItems={'center'}
+      marginBottom={'24px'}
+    >
       <FeedBox>
         <TextField
           label="Post your status"
@@ -62,9 +67,11 @@ export default function Feed() {
           <SendIcon />
         </IconButton>
       </FeedBox>
-      {posts &&
-        !!posts.length &&
-        posts.map(post => <StatusPostCard statusPost={post} />)}
+      <Box display={'flex'} flexDirection={'column'} gap={'24px'}>
+        {posts &&
+          !!posts.length &&
+          posts.map(post => <StatusPostCard statusPost={post} />)}
+      </Box>
     </Box>
   );
 }
