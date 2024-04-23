@@ -31,7 +31,7 @@ const userListSlice = createSlice({
       fetchFriends: (state, action: PayloadAction<{currentUserId: string}>) => { //eslint-disable-line
       state.isLoading = true;
     },
-    fetchFriendsSuccess: (state, action: PayloadAction<IFriendship[]>) => {
+    fetchFriendsSuccess: (state, action: PayloadAction<IUser[]>) => {
       state.friends = [...action.payload];
       state.isLoading = false;
     },

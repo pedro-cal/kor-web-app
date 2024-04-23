@@ -1,11 +1,11 @@
-import { IAppError } from "./globalTypes";
+import { IAppError } from './globalTypes';
 
 export interface IUser {
-   id: string;
-   username?: string;
-   email?: string;
-   status?: string;
-   imgUrl?: string;
+  id: string;
+  username?: string;
+  email?: string;
+  status?: string;
+  imgUrl?: string;
 }
 export interface IFriendship {
   id: string;
@@ -15,19 +15,19 @@ export interface IFriendship {
 }
 
 export interface IUserListState {
-   users: IUser[];
-   friends: IFriendship[],
-   newConnection: IFriendship | undefined,
-   isLoading: boolean;
-   error: IAppError | undefined;
- }
+  users: IUser[];
+  friends: IUser[];
+  newConnection: IFriendship | undefined;
+  isLoading: boolean;
+  error: IAppError | undefined;
+}
 
- export interface IStatusPayload {
-   id: string;
-   status: string | undefined;
- }
- 
- export interface IConnectionPayload {
-   inviterId: string;
-   inviteeId: string;
- }
+export interface IStatusPayload {
+  id: string;
+  status: string | undefined;
+}
+
+export interface IConnectionPayload {
+  inviterId: string;
+  inviteeId: string;
+}

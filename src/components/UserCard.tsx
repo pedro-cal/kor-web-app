@@ -12,12 +12,19 @@ interface IUserCardProps {
   handleOpenUserDetails: (clickedUser: IUser) => void;
 }
 
-export default function UserCard({ user, handleOpenUserDetails }: IUserCardProps) {
+export default function UserCard({
+  user,
+  handleOpenUserDetails,
+}: IUserCardProps) {
   if (!user) return;
   const { id, username, email, status, imgUrl } = user;
 
   return (
-    <Card key={id} sx={{ maxWidth: 345 }} onClick={() => handleOpenUserDetails(user)}>
+    <Card
+      key={id}
+      sx={{ maxWidth: 345 }}
+      onClick={() => handleOpenUserDetails(user)}
+    >
       <CardActionArea>
         <CardMedia
           component="img"

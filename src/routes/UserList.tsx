@@ -40,17 +40,24 @@ const UserList: React.FC = () => {
   const stateUser = useSelector(
     (state: IRootState) => state.global.currentUser
   );
+  const friends = useSelector((state: IRootState) => state.userList.friends);
   const currentUser = getCurrentUser(stateUser);
   const { users, isLoading, error } = useSelector(
     (state: IRootState) => state.userList
   );
+  const displayUsers = users.filter(u => u.id !== currentUser.id);
   const [openDetails, setOpenDetails] = useState(false);
+  const [showFriends, setShowFriends] = useState(false);
   const [selectedUser, setSelectedUser] = useState<IUser | undefined>(
     undefined
   );
 
   const isCurrentUser =
     selectedUser && currentUser ? selectedUser.id === currentUser.id : false;
+
+  const handleToggleShowFriends = useCallback(() => {
+    setShowFriends(!showFriends);
+  }, [showFriends]);
 
   const handleOpenUserDetails = useCallback((clickedUser: IUser) => {
     setSelectedUser(clickedUser);
@@ -138,15 +145,26 @@ const UserList: React.FC = () => {
                 variant="outlined"
                 startIcon={<FilterListIcon />}
                 color="primary"
+                onClick={handleToggleShowFriends}
               >
-                Show Friends
+                {showFriends ? 'Show All' : 'Show Friends'}
               </Button>
             </StatusBar>
           )}
           <CardsGrid>
-            {(!users || !users?.length) && <p>No users found</p>}
-            {users &&
-              users.map(user => (
+            {(!displayUsers || !displayUsers?.length) && <p>No users found</p>}
+            {displayUsers &&
+              !showFriends &&
+              displayUsers.map(user => (
+                <UserCard
+                  key={user.id}
+                  user={user}
+                  handleOpenUserDetails={handleOpenUserDetails}
+                />
+              ))}
+            {friends &&
+              showFriends &&
+              friends.map(user => (
                 <UserCard
                   key={user.id}
                   user={user}
